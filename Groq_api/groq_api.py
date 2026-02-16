@@ -66,4 +66,4 @@ if input_text:
             st.info("💡 Add GROQ_API_KEY to Secrets tab (cloud) or .env (local)")
 
 st.markdown("---")
-st.caption("☁️ Cloud deploy | 👨‍💻 Built by Vamsi Krishna | 🚀 Companion: Groq_API")
+st.caption("☁️ Cloud deploy | 👨‍💻 Built by Vamsi Krishna |")
