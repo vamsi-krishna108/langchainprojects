@@ -17,6 +17,15 @@ from langchain.agents import create_react_agent, AgentExecutor
 from langchain.memory import ConversationSummaryBufferMemory
 
 load_dotenv()
+# Works both locally and on Streamlit Cloud
+try:
+    # Streamlit Cloud
+    groq_api_key = st.secrets["GROQ_API_KEY"]
+    os.environ["LANGCHAIN_API_KEY"] = st.secrets["LANGCHAIN_API_KEY"]
+except:
+    # Local .env file
+    groq_api_key = os.getenv("GROQ_API_KEY")
+
 
 # ── Page Config ────────────────────────────────────────────────
 st.set_page_config(page_title="QuantumBot", page_icon="⚛️")
