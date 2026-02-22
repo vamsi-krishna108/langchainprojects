@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.tools import create_retriever_tool
 from langchain_community.utilities import WikipediaAPIWrapper, ArxivAPIWrapper
@@ -15,6 +14,7 @@ from langchain_community.tools.arxiv.tool import ArxivQueryRun
 from langchain_core.prompts import PromptTemplate
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain.memory import ConversationSummaryBufferMemory
+from langchain_huggingface import HuggingFaceEmbeddings
 
 load_dotenv()
 # Works both locally and on Streamlit Cloud
@@ -66,7 +66,9 @@ if "vectors" not in st.session_state:
 
         splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         final_documents = splitter.split_documents(docs)
-        embeddings = OllamaEmbeddings()
+        # ✅ Replace with HuggingFace embeddings (free, works on cloud)
+
+        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         st.session_state.vectors = FAISS.from_documents(final_documents, embeddings)
     st.success("✅ Docs loaded!")
 
