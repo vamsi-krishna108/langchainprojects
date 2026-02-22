@@ -46,7 +46,7 @@ st.sidebar.info(f"Memory: {memory_type} | Agent: {agent_type}")
 
 # ── LLM ────────────────────────────────────────────────────────
 llm = ChatGroq(
-    groq_api_key=os.environ["GROQ_API_KEY"],
+    groq_api_key=groq_api_key,
     model="qwen/qwen3-32b",
     temperature=0,
     model_kwargs={"reasoning_format": "hidden"}
