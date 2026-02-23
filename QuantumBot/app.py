@@ -1,3 +1,20 @@
+# import os
+# import time
+# import streamlit as st
+# from dotenv import load_dotenv
+
+# from langchain_groq import ChatGroq
+# from langchain_community.document_loaders import WebBaseLoader
+# from langchain_text_splitters import RecursiveCharacterTextSplitter
+# from langchain_community.vectorstores import FAISS
+# from langchain_core.tools import create_retriever_tool
+# from langchain_community.utilities import WikipediaAPIWrapper, ArxivAPIWrapper
+# from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
+# from langchain_community.tools.arxiv.tool import ArxivQueryRun
+# from langchain_core.prompts import PromptTemplate
+# from langchain.agents import create_react_agent, AgentExecutor
+# from langchain.memory import ConversationSummaryBufferMemory
+# from langchain_huggingface import HuggingFaceEmbeddings
 import os
 import time
 import streamlit as st
@@ -12,7 +29,8 @@ from langchain_community.utilities import WikipediaAPIWrapper, ArxivAPIWrapper
 from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
 from langchain_community.tools.arxiv.tool import ArxivQueryRun
 from langchain_core.prompts import PromptTemplate
-from langchain.agents import create_react_agent, AgentExecutor
+from langchain.agents import AgentExecutor  # Keep this
+from langchain.agents.react.agent import create_react_agent  # Fixed import!
 from langchain.memory import ConversationSummaryBufferMemory
 from langchain_huggingface import HuggingFaceEmbeddings
 
