@@ -79,27 +79,29 @@ if "agent_executor" not in st.session_state:
     st.session_state.agent_executor = create_react_agent(llm, tools)
 
 # ── Memory Setup (for display + context) ──────────────────────
+# ── Memory Setup (simple dict — no langchain.memory needed) ────
 if "lc_memory" not in st.session_state:
+    st.session_state.lc_memory = {"buffer": "", "entity_store": {}}
+
+def save_memory(user_input, bot_output):
     if memory_type == "Buffer":
-        from langchain.memory import ConversationBufferMemory
-        st.session_state.lc_memory = ConversationBufferMemory(
-            memory_key="chat_history", return_messages=False
-        )
+        st.session_state.lc_memory["buffer"] += f"User: {user_input}\nBot: {bot_output}\n"
+
     elif memory_type == "Summary":
-        from langchain.memory import ConversationSummaryMemory
-        st.session_state.lc_memory = ConversationSummaryMemory(
-            llm=llm, memory_key="chat_history"
-        )
+        # Keep only last summary — compressed
+        st.session_state.lc_memory["buffer"] = f"Summary so far: User asked about {user_input[:50]}..."
+
     elif memory_type == "Buffer Window":
-        from langchain.memory import ConversationBufferWindowMemory
-        st.session_state.lc_memory = ConversationBufferWindowMemory(
-            k=3, memory_key="chat_history"
-        )
+        # Keep only last 3 exchanges
+        lines = st.session_state.lc_memory["buffer"].split("\n")
+        lines = [l for l in lines if l]  # remove empty
+        lines.append(f"User: {user_input}")
+        lines.append(f"Bot: {bot_output}")
+        st.session_state.lc_memory["buffer"] = "\n".join(lines[-6:])  # last 3 pairs
+
     elif memory_type == "Entity":
-        from langchain.memory import ConversationEntityMemory
-        st.session_state.lc_memory = ConversationEntityMemory(
-            llm=llm, memory_key="chat_history"
-        )
+        # Extract simple entity (just store user name/topic mentions)
+        st.session_state.lc_memory["entity_store"][f"topic_{len(st.session_state.chat_history)}"] = user_input
 
 # ── Chat History (display) ─────────────────────────────────────
 if "chat_history" not in st.session_state:
@@ -148,10 +150,8 @@ if user_prompt:
     st.session_state.messages.append(AIMessage(content=full_response))
 
     # Save to langchain memory (for memory state display)
-    st.session_state.lc_memory.save_context(
-        {"input": user_prompt},
-        {"output": full_response}
-    )
+    # ✅ Replace with
+    save_memory(user_prompt, full_response)
 
     # Save to display history
     st.session_state.chat_history.append({"role": "user",      "content": user_prompt})
@@ -160,8 +160,10 @@ if user_prompt:
     with st.expander("🧠 Agent Thought Process"):
         st.json({"input": user_prompt, "output": full_response})
 
+    
+    # ✅ Replace with
     with st.expander("💾 Current Memory State"):
-        if hasattr(st.session_state.lc_memory, "buffer"):
-            st.text(st.session_state.lc_memory.buffer)
-        elif hasattr(st.session_state.lc_memory, "entity_store"):
-            st.json(st.session_state.lc_memory.entity_store)
+        if memory_type == "Entity":
+            st.json(st.session_state.lc_memory["entity_store"])
+        else:
+            st.text(st.session_state.lc_memory["buffer"])
