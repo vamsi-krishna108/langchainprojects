@@ -41,8 +41,7 @@ st.sidebar.info(f"Memory: {memory_type}")
 llm = ChatGroq(
     groq_api_key=groq_api_key,
     model="qwen/qwen3-32b",
-    temperature=0,
-    model_kwargs={"reasoning_format": "hidden"}
+    temperature=0
 )
 
 # ── Build Vector Store ─────────────────────────────────────────
